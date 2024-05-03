@@ -6,7 +6,8 @@ def canUnlockAll(boxes):
     """Determines if all the boxes can be opened or not.
 
     Args:
-        boxes (list of int): A list of lists representing the boxes and their keys.
+        boxes (list of int): A list of lists
+        representing the boxes and their keys.
 
     Returns:
         bool: True if all boxes can be opened, False otherwise.
