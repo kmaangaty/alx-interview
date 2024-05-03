@@ -8,7 +8,7 @@ def canUnlockAll(boxes):
     """Determines if all the boxes can be unlocked.
 
     Args:
-        boxes (list of int): A list of lists representing the boxes and their keys.
+        boxes (list of list of int): A list of lists representing the boxes and their keys.
 
     Returns:
         bool: True if all boxes can be unlocked, False otherwise.
@@ -19,10 +19,10 @@ def canUnlockAll(boxes):
     # Traverse through the keys and explore other boxes
     for key in keys:
         # Check keys in the current box
-        for box_key in boxes[key]:
+        for boxKey in boxes[key]:
             # If the key is new and within the range of boxes, add it to the list of keys
-            if box_key not in keys and box_key < len(boxes):
-                keys.append(box_key)
+            if boxKey not in keys and boxKey < len(boxes):
+                keys.append(boxKey)
 
     # If the number of keys equals the number of boxes, all boxes can be unlocked
     if len(keys) == len(boxes):
