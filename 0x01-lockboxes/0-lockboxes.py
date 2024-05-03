@@ -1,37 +1,46 @@
 #!/usr/bin/env python3
 """
-Determines if all the boxes can be opened.
-
-You have n number of locked boxes in front of you. Each box is numbered sequentially from 0 to n - 1
-and each box may contain keys to the other boxes.
-
-A key with the same number as a box opens that box. You can assume all keys will be positive integers.
-There can be keys that do not have boxes. The first box boxes[0] is unlocked.
-
-Returns:
-    bool: True if all boxes can be opened, False otherwise.
+LockBoxes Challenge
 """
 
 
 def canUnlockAll(boxes):
-    """
+    """Determines if all the boxes can be opened or not.
+
     Args:
-        boxes (list of int): A list of lists representing the boxes and their keys.
+        boxes (list of list of int): A list of lists representing the boxes and their keys.
 
     Returns:
         bool: True if all boxes can be opened, False otherwise.
     """
-    if not boxes or len(boxes) == 1:
-        return True
+    num_boxes = len(boxes)
+    opened_boxes = set()
+    keys = set()
+    current_box = 0
 
-    keys = set(boxes[0])
-    opened = {0}
+    while current_box < num_boxes:
+        opened_boxes.add(current_box)
+        keys.update(boxes[current_box])
+        next_box = None
+        for key in keys:
+            if key != current_box and key < num_boxes and key not in opened_boxes:
+                next_box = key
+                break
+        if next_box is not None:
+            current_box = next_box
+        else:
+            break
 
-    while opened:
-        box = opened.pop()
-        for key in boxes[box]:
-            if key < len(boxes) and key not in keys:
-                opened.add(key)
-                keys.add(key)
+    for box in range(num_boxes):
+        if box not in opened_boxes and box != 0:
+            return False
+    return True
 
-    return len(keys) == len(boxes)
+
+if __name__ == "__main__":
+    # Test cases
+    boxes1 = [[1], [2], [3], [4], []]
+
+    boxes2 = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
+
+    boxes3 = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
