@@ -69,12 +69,11 @@ def update_metrics(line, total_file_size, status_codes_stats):
     Returns:
         int: The new total file size after updating metrics.
     """
-    li = extract_input(line)
-    sc = li.get('status_code', '0')
-    if sc in status_codes_stats.keys():
-        status_codes_stats[sc] += 1
-    return total_file_size + li['file_size']
-
+    line_info = extract_input(line)
+    status_code = line_info.get('status_code', '0')
+    if status_code in status_codes_stats.keys():
+        status_codes_stats[status_code] += 1
+    return total_file_size + line_info['file_size']
 
 def run():
     """Start parser."""
