@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Script to compute metrics from stdin.
+Log parsing script that computes metrics from stdin.
 
 This script reads input from stdin, parses the data, and computes
 metrics based on the input data. It tracks the total file size and
@@ -12,15 +12,14 @@ import sys
 import signal
 
 # Initialize variables
-line_count = 0
-total_size = 0
-status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+total_file_size = 0
+status_code_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 
 
 def print_statistics():
     """Prints statistics."""
-    print("File size:", total_size)
-    sorted_status_codes = sorted(status_codes.items())
+    print("Total file size:", total_file_size)
+    sorted_status_codes = sorted(status_code_counts.items())
     for code, count in sorted_status_codes:
         if count > 0:
             print("{}: {}".format(code, count))
@@ -34,19 +33,26 @@ def handle_interrupt(sig, frame):
 
 signal.signal(signal.SIGINT, handle_interrupt)
 
-for line in sys.stdin:
-    line_count += 1
+# Process input
+for line_count, line in enumerate(sys.stdin, start=1):
+    if line_count % 10 == 0:
+        print_statistics()
+
     try:
-        _, _, _, status_code_str, size_str = line.split()
+        # Split the line into components
+        _, _, _, status_code_str, file_size_str = line.split()
+
+        # Convert status code and file size to integers
         status_code = int(status_code_str)
-        size = int(size_str)
-        if status_code in status_codes:
-            status_codes[status_code] += 1
-        total_size += size
+        file_size = int(file_size_str)
+
+        # Update total file size
+        total_file_size += file_size
+
+        # Update status code count
+        if status_code in status_code_counts:
+            status_code_counts[status_code] += 1
+
     except ValueError:
         # Skip line if format is not as expected
         continue
-
-    # Print stats every 10 lines
-    if line_count % 10 == 0:
-        print_statistics()
