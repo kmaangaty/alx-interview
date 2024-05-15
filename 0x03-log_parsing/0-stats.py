@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """parsing HTTP request logs and computing metrics.
 
-This script reads lines from standard input, extracts information from HTTP request logs,
+This script reads lines from standard input,
+ extracts information from HTTP request logs,
 and computes metrics based on the extracted data.
 """
 
@@ -16,9 +17,9 @@ def extract_input(input_line):
         input_line (str): A line from an HTTP request log.
 
     Returns:
-        dict: A dictionary containing extracted information from the input line.
+        dict: A dictionary containing extracted
+         information from the input line.
     """
-    # Regular expression patterns for extracting components from the log line
     log_pattern = (
         r'\s*(?P<ip>\S+)\s*',
         r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
@@ -53,7 +54,8 @@ def print_statistics(total_file_size, status_codes_stats):
     for status_code in sorted(status_codes_stats.keys()):
         num = status_codes_stats.get(status_code, 0)
         if num > 0:
-            print('{:s}: {:d}'.format(status_code, num), flush=True)
+            print('{:s}: {:d}'.format(
+                status_code, num), flush=True)
 
 
 def update_metrics(line, total_file_size, status_codes_stats):
