@@ -75,6 +75,7 @@ def update_metrics(line, total_file_size, status_codes_stats):
         status_codes_stats[status_code] += 1
     return total_file_size + line_info['file_size']
 
+
 def run():
     """Start parser."""
     line_num = 0
