@@ -1,13 +1,25 @@
 #!/usr/bin/python3
-'''A script for parsing HTTP request logs.
-'''
+"""parsing HTTP request logs and computing metrics.
+
+This script reads lines from standard input, extracts information from HTTP request logs,
+and computes metrics based on the extracted data.
+"""
+
 import re
 
 
 def extract_input(input_line):
-    '''Extracts sections of a line of an HTTP request log.
-    '''
-    fp = (
+    """
+    extract_input() of a line of an HTTP request log.
+
+    Args:
+        input_line (str): A line from an HTTP request log.
+
+    Returns:
+        dict: A dictionary containing extracted information from the input line.
+    """
+    # Regular expression patterns for extracting components from the log line
+    log_pattern = (
         r'\s*(?P<ip>\S+)\s*',
         r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
         r'\s*"(?P<request>[^"]*)"\s*',
@@ -18,19 +30,25 @@ def extract_input(input_line):
         'status_code': 0,
         'file_size': 0,
     }
-    log_fmt = '{}\\-{}{}{}{}\\s*'.format(fp[0], fp[1], fp[2], fp[3], fp[4])
-    resp_match = re.fullmatch(log_fmt, input_line)
-    if resp_match is not None:
-        status_code = resp_match.group('status_code')
-        file_size = int(resp_match.group('file_size'))
+    log_format = '{}\\-{}{}{}{}\\s*'.format(*log_pattern)
+    match = re.fullmatch(log_format, input_line)
+    if match:
+        status_code = match.group('status_code')
+        file_size = int(match.group('file_size'))
         info['status_code'] = status_code
         info['file_size'] = file_size
     return info
 
 
 def print_statistics(total_file_size, status_codes_stats):
-    '''Prints the accumulated statistics of the HTTP request log.
-    '''
+    """Prints accumulated statistics.
+
+    Args:
+        total_file_size (int): The total file
+         size accumulated so far.
+        status_codes_stats (dict): A dictionary
+        containing counts of different status codes.
+    """
     print('File size: {:d}'.format(total_file_size), flush=True)
     for status_code in sorted(status_codes_stats.keys()):
         num = status_codes_stats.get(status_code, 0)
@@ -39,14 +57,18 @@ def print_statistics(total_file_size, status_codes_stats):
 
 
 def update_metrics(line, total_file_size, status_codes_stats):
-    '''Updates the metrics from a given HTTP request log.
+    """Updates the metrics from a given HTTP request log.
 
     Args:
-        line (str): The line of input from which to retrieve the metrics.
+        line (str): The line of input from which
+        to retrieve the metrics.
+        total_file_size (int): The current total file size.
+        status_codes_stats (dict): A dictionary containing
+         counts of different status codes.
 
     Returns:
-        int: The new total file size.
-    '''
+        int: The new total file size after updating metrics.
+    """
     line_info = extract_input(line)
     status_code = line_info.get('status_code', '0')
     if status_code in status_codes_stats.keys():
@@ -55,8 +77,7 @@ def update_metrics(line, total_file_size, status_codes_stats):
 
 
 def run():
-    '''Starts the log parser.
-    '''
+    """Start parser."""
     line_num = 0
     total_file_size = 0
     status_codes_stats = {
