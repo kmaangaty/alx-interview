@@ -12,40 +12,41 @@ import sys
 import signal
 
 # Initialize variables
-x = 0
-y = 0
-z = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
+total_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 
 
-def a():
+def print_statistics():
     """Prints statistics."""
-    print("File size:", y)
-    s = sorted(z.items())
-    for c, n in s:
-        if n > 0:
-            print("{}: {}".format(c, n))
+    print("File size:", total_size)
+    sorted_status_codes = sorted(status_codes.items())
+    for code, count in sorted_status_codes:
+        if count > 0:
+            print("{}: {}".format(code, count))
 
 
-def b(s, f):
+def handle_interrupt(sig, frame):
     """Handles keyboard interrupt."""
-    a()
+    print_statistics()
     sys.exit(0)
 
 
-signal.signal(signal.SIGINT, b)
+signal.signal(signal.SIGINT, handle_interrupt)
 
-for lb in sys.stdin:
-    x += 1
+for line in sys.stdin:
+    line_count += 1
     try:
-        _, _, _, c, s = lb.split()
-        c = int(c)
-        s = int(s)
-        if c in z:
-            z[c] += 1
-        y += s
+        _, _, _, status_code_str, size_str = line.split()
+        status_code = int(status_code_str)
+        size = int(size_str)
+        if status_code in status_codes:
+            status_codes[status_code] += 1
+        total_size += size
     except ValueError:
+        # Skip line if format is not as expected
         continue
 
     # Print stats every 10 lines
-    if x % 10 == 0:
-        a()
+    if line_count % 10 == 0:
+        print_statistics()
