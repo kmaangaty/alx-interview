@@ -28,7 +28,8 @@ def solve_nqueens(board_size):
         board_size (int): The size of the chessboard.
 
     Returns:
-        list: List of solutions, where each solution is a list of queen positions.
+        list: List of solutions,
+         where each solution is a list of queen positions.
     """
     if board_size == 0:
         return [[]]
