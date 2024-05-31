@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This script solves the N Queens puzzle.
-Usage: nqueens N
 """
 
 import sys
@@ -79,4 +78,9 @@ def main():
 
     board = [[0] * N for _ in range(N)]
     solutions = solve_nqueens(board, 0)
-    print_solutions(solutions)
+    for solution in solutions:
+        print(solution)
+
+
+if __name__ == "__main__":
+    main()
