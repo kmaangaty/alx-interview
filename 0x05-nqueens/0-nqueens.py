@@ -6,13 +6,13 @@ N queens
 import sys
 
 
-def is_safe(board, row, col):
+def is_safe(b, r, c):
     """
     Checks if it's safe to place a queen at board[row][col].
     """
     # Check the row on the left side
-    for i in range(col):
-        if board[i] == row or board[i] == row - col + i or board[i] == row + col - i:
+    for i in range(c):
+        if b[i] == r or b[i] == r - c + i or b[i] == r + c - i:
             return False
     return True
 
