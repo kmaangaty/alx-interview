@@ -80,4 +80,3 @@ def main():
     board = [[0] * N for _ in range(N)]
     solutions = solve_nqueens(board, 0)
     print_solutions(solutions)
-
