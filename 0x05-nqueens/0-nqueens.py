@@ -1,58 +1,66 @@
 #!/usr/bin/python3
 """
-This script solves the N Queens puzzle.
+Solves the N Queens problem.
 """
 
 import sys
 
+# Check if the correct number of arguments is provided
+if len(sys.argv) != 2:
+    print('Usage: nqueens N')
+    exit(1)
 
-def is_safe(board, row, col):
+try:
+    # Convert the argument to an integer
+    board_size = int(sys.argv[1])
+except ValueError:
+    # Handle the case where the argument is not an integer
+    print('N must be a number')
+    exit(1)
+
+# Check if the board size is valid
+if board_size < 4:
+    print('N must be at least 4')
+    exit(1)
+
+
+def solve_nqueens(board_size):
     """
-    Check if a queen can be placed on board[row][col].
-    This function is called when "col" queens are already placed
-    in columns from 0 to col - 1. So we need to check only left
-    side for attacking queens.
+    Solves the N Queens problem using recursion and backtracking.
     """
-    for i in range(col):
-        if board[row][i] == 1:
-            return False
+    if board_size == 0:
+        return [[]]
 
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
+    inner_solutions = solve_nqueens(board_size - 1)
+    return [solution + [(board_size, col + 1)]
+            for col in range(board_size)
+            for solution in inner_solutions
+            if is_safe((board_size, col + 1), solution)]
 
-    for i, j in zip(range(row, len(board), 1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
 
+def is_attacked(square, queen):
+    """
+    Checks if two queens attack each other.
+    """
+    (row1, col1) = square
+    (row2, col2) = queen
+    return (row1 == row2) or (col1 == col2) or \
+        abs(row1 - row2) == abs(col1 - col2)
+
+
+def is_safe(square, queens):
+    """
+    Checks if placing a queen at a square is safe.
+    """
+    for queen in queens:
+        if is_attacked(square, queen):
+            return False
     return True
 
 
-def solve_nqueens(board, col):
-    """
-    Solve the N Queens problem using backtracking
-    """
-    if col >= len(board):
-        solution = []
-        for i in range(len(board)):
-            for j in range(len(board)):
-                if board[i][j] == 1:
-                    solution.append([i, j])
-        return [solution]
-
-    solutions = []
-    for i in range(len(board)):
-        if is_safe(board, i, col):
-            board[i][col] = 1
-            for sol in solve_nqueens(board, col + 1):
-                solutions.append(sol)
-            board[i][col] = 0
-    return solutions
-
-
-def print_solutions(solutions):
-    """
-    Print all the solutions
-    """
-    for solution in solutions:
-        print(solution)
+# Reverse the solutions for printing them in the correct order
+for solution in reversed(solve_nqueens(board_size)):
+    formatted_solution = []
+    for position in [list(pos) for pos in solution]:
+        formatted_solution.append([i - 1 for i in position])
+    print(formatted_solution)
