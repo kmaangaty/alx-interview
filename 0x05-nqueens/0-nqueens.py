@@ -5,20 +5,16 @@ Solves the N Queens problem.
 
 import sys
 
-# Check if the correct number of arguments is provided
 if len(sys.argv) != 2:
     print('Usage: nqueens N')
     exit(1)
 
 try:
-    # Convert the argument to an integer
     board_size = int(sys.argv[1])
 except ValueError:
-    # Handle the case where the argument is not an integer
     print('N must be a number')
     exit(1)
 
-# Check if the board size is valid
 if board_size < 4:
     print('N must be at least 4')
     exit(1)
@@ -26,7 +22,13 @@ if board_size < 4:
 
 def solve_nqueens(board_size):
     """
-    Solves the N Queens problem using recursion and backtracking.
+    Solves the N Queens problem recursively.
+
+    Args:
+        board_size (int): The size of the chessboard.
+
+    Returns:
+        list: List of solutions, where each solution is a list of queen positions.
     """
     if board_size == 0:
         return [[]]
@@ -41,16 +43,30 @@ def solve_nqueens(board_size):
 def is_attacked(square, queen):
     """
     Checks if two queens attack each other.
+
+    Args:
+        square (tuple): Position of the new queen.
+        queen (tuple): Position of an existing queen.
+
+    Returns:
+        bool: True if the queens attack each other, False otherwise.
     """
     (row1, col1) = square
     (row2, col2) = queen
-    return (row1 == row2) or (col1 == col2) or \
+    return (row1 == row2) or (col1 == col2) or\
         abs(row1 - row2) == abs(col1 - col2)
 
 
 def is_safe(square, queens):
     """
     Checks if placing a queen at a square is safe.
+
+    Args:
+        square (tuple): Position of the new queen.
+        queens (list): List of existing queen positions.
+
+    Returns:
+        bool: True if the square is safe, False otherwise.
     """
     for queen in queens:
         if is_attacked(square, queen):
@@ -58,7 +74,6 @@ def is_safe(square, queens):
     return True
 
 
-# Reverse the solutions for printing them in the correct order
 for solution in reversed(solve_nqueens(board_size)):
     formatted_solution = []
     for position in [list(pos) for pos in solution]:
