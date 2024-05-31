@@ -10,17 +10,17 @@ if len(sys.argv) != 2:
     exit(1)
 
 try:
-    board_size = int(sys.argv[1])
+    n = int(sys.argv[1])
 except ValueError:
     print('N must be a number')
     exit(1)
 
-if board_size < 4:
+if n < 4:
     print('N must be at least 4')
     exit(1)
 
 
-def solve_nqueens(board_size):
+def solve_nqueens(size):
     """
     Solves the N Queens problem recursively.
 
@@ -31,17 +31,16 @@ def solve_nqueens(board_size):
         list: List of solutions,
          where each solution is a list of queen positions.
     """
-    if board_size == 0:
+    if size == 0:
         return [[]]
+    inner_solution = solve_nqueens(size - 1)
+    return [solution + [(size, col + 1)]
+            for col in range(n)
+            for solution in inner_solution
+            if is_safe((size, col + 1), solution)]
 
-    inner_solutions = solve_nqueens(board_size - 1)
-    return [solution + [(board_size, col + 1)]
-            for col in range(board_size)
-            for solution in inner_solutions
-            if is_safe((board_size, col + 1), solution)]
 
-
-def is_attacked(square, queen):
+def attack_queen(square, queen):
     """
     Checks if two queens attack each other.
 
@@ -54,11 +53,11 @@ def is_attacked(square, queen):
     """
     (row1, col1) = square
     (row2, col2) = queen
-    return (row1 == row2) or (col1 == col2) or\
+    return (row1 == row2) or (col1 == col2) or \
         abs(row1 - row2) == abs(col1 - col2)
 
 
-def is_safe(square, queens):
+def is_safe(sqr, qns):
     """
     Checks if placing a queen at a square is safe.
 
@@ -69,14 +68,14 @@ def is_safe(square, queens):
     Returns:
         bool: True if the square is safe, False otherwise.
     """
-    for queen in queens:
-        if is_attacked(square, queen):
+    for q in qns:
+        if attack_queen(sqr, q):
             return False
     return True
 
 
-for solution in reversed(solve_nqueens(board_size)):
-    formatted_solution = []
-    for position in [list(pos) for pos in solution]:
-        formatted_solution.append([i - 1 for i in position])
-    print(formatted_solution)
+for answer in reversed(solve_nqueens(n)):
+    result = []
+    for p in [list(p) for p in answer]:
+        result.append([i - 1 for i in p])
+    print(result)
