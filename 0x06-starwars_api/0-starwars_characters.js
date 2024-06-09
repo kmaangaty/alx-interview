@@ -1,35 +1,36 @@
 #!/usr/bin/node
 
-// Import the request module to make HTTP requests
-const request = require('request');
+// Import the request module for making HTTP requests
+const httpRequest = require('request');
 
-// Parse command-line arguments to get the movie ID
-const movieID = process.argv[2];
+// Retrieve the movie ID from the command-line arguments
+const movieId = process.argv[2];
 
-// Construct the URL for the Star Wars API endpoint
-const apiUrl = `https://swapi.dev/api/films/${movieID}/`;
+// Construct the URL for the Star Wars API endpoint using the provided movie ID
+const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}`;
 
-// Make an HTTP GET request to the Star Wars API
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error('Error:', error);
-  } else if (response.statusCode !== 200) {
-    console.error('HTTP Error:', response.statusCode);
-  } else {
-    // Parse the JSON response
-    const movieData = JSON.parse(body);
-    const characters = movieData.characters;
+// Make an asynchronous HTTP GET request to the Star Wars API
+httpRequest(apiUrl, async (error, response, body) => {
+  // Handle errors, if any
+  error && console.log(error);
 
-    // Print each character name
-    characters.forEach((characterUrl) => {
+  // Extract the array of character URLs from the response body
+  const charactersArray = JSON.parse(response.body).characters;
+
+  // Iterate over each character URL and make an asynchronous request for their details
+  for (const characterUrl of charactersArray) {
+    // Use Promise to handle asynchronous request
+    await new Promise((resolve, reject) => {
       // Make a request for each character URL
-      request(characterUrl, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-          const characterData = JSON.parse(body);
-          console.log(characterData.name);
-        } else {
-          console.error('Error fetching character:', error);
-        }
+      httpRequest(characterUrl, (error, response, body) => {
+        // Handle errors, if any
+        error && console.log(error);
+
+        // Parse the response body to extract the character's name and log it
+        console.log(JSON.parse(body).name);
+
+        // Resolve the Promise to continue with the next iteration
+        resolve();
       });
     });
   }
