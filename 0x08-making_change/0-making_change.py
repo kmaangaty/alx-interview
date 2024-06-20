@@ -1,32 +1,40 @@
 #!/usr/bin/python3
 """
-Module to solve the coin change problem using dynamic programming.
+Given a pile of coins of different values,
+determine the fewest number of coins needed to meet
+a given amount total.
 """
+import sys
 
 
-def makeChange(coins, total):
+def makeChange(coins, total_amount):
     """
-    Calculate the fewest number of coins needed to meet a given amount total.
+    Calculate the fewest number of coins needed to meet the given total amount.
 
     Args:
         coins (list of int): List of coin denominations available.
-        total (int): The target total amount to make up with the fewest coins.
+        total_amount (int): Target total amount to achieve using the coins.
 
     Returns:
-        int: Minimum number of coins needed to meet the total amount.
-             Returns -1 if the total cannot be met with the given coins.
+        int: Fewest number of coins needed to meet the total amount.
+             If total_amount is 0 or less, returns 0.
+             If total_amount cannot be met by any combination of coins, returns -1.
     """
-    if total < 0:
-        return -1
-    if total == 0:
+    if total_amount <= 0:
         return 0
 
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0
+    min_coins = [sys.maxsize for _ in range(total_amount + 1)]
+    min_coins[0] = 0
 
-    for i in range(1, total + 1):
-        for coin in coins:
-            if i - coin >= 0:
-                dp[i] = min(dp[i], dp[i - coin] + 1)
+    num_coins = len(coins)
 
-    return dp[total] if dp[total] != float('inf') else -1
+    for amount in range(1, total_amount + 1):
+        for coin_index in range(num_coins):
+            if coins[coin_index] <= amount:
+                sub_result = min_coins[amount - coins[coin_index]]
+                if sub_result != sys.maxsize and sub_result + 1 < min_coins[amount]:
+                    min_coins[amount] = sub_result + 1
+
+    if min_coins[total_amount] == sys.maxsize:
+        return -1
+    return min_coins[total_amount]
