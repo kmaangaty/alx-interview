@@ -3,6 +3,7 @@
 Module to solve the coin change problem using dynamic programming.
 """
 
+
 def makeChange(coins, total):
     """
     Calculate the fewest number of coins needed to meet a given amount total.
