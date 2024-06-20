@@ -3,7 +3,6 @@
 Module to solve the coin change problem using dynamic programming.
 """
 
-
 def makeChange(coins, total):
     """
     Calculate the fewest number of coins needed to meet a given amount total.
@@ -24,9 +23,9 @@ def makeChange(coins, total):
     dp = [float('inf')] * (total + 1)
     dp[0] = 0
 
-    for coin in coins:
-        for j in range(coin, total + 1):
-            if dp[j - coin] != float('inf'):
-                dp[j] = min(dp[j], dp[j - coin] + 1)
+    for i in range(1, total + 1):
+        for coin in coins:
+            if i - coin >= 0:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
 
     return dp[total] if dp[total] != float('inf') else -1
